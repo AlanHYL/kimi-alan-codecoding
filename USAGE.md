@@ -362,7 +362,7 @@ AlanCodecoding 交付的代码经过严格质量控制，不是"能跑就行"的
 
 | 工具 | 作用 |
 |---|---|
-| `scaffold_project` | 生成项目骨架（认证+日志+错误处理+CORS+优雅关闭+Dockerfile+CI/CD 已内置），每个项目从同一高标准起步 |
+| `scaffold_project` | 生成项目骨架（认证+日志+错误处理+CORS+优雅关闭+Dockerfile+CI/CD+**数据备份** 已内置），每个项目从同一高标准起步 |
 | `quality_gates` | **程序化**运行编译检查、测试、安全审计，返回 PASS/FAIL，不依赖 AI 自觉 |
 | `code_check` | **自动扫描**硬编码、console.log、CORS 配置、认证缺失等违规 |
 
