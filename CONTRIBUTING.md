@@ -7,11 +7,21 @@
 ```
 alan-codecoding/
 ├── SKILL.md                 # 核心流水线（主文件）
+├── README.md                # 项目首页（英文）
+├── README.zh-CN.md          # 项目首页（中文）
 ├── USAGE.md                 # 使用说明书
 ├── CAPABILITIES.md          # 核心能力手册
-├── README.md                # 项目首页
+├── AGENTS.md                # AI Agent 开发指南
+├── production-standards.md  # 生产级标准能力矩阵
+├── CONTRIBUTING.md          # 本文件
+├── LICENSE                  # MIT
+├── CHANGELOG.md             # 版本历史
 ├── package.json             # npm 元信息
 ├── sync_to_github.py        # 自动同步脚本
+├── mcp-server/              # 🆕 MCP Server（TypeScript）
+│   ├── package.json
+│   └── src/index.js         # scaffold_project / quality_gates / code_check / template_list
+├── .github/                 # Issue + PR 模板
 └── references/prompts/      # Agent 提示模板
     ├── 00-architect.md      # 架构师
     ├── 01-implementer.md    # 编码者
@@ -34,7 +44,10 @@ alan-codecoding/
 1. Fork 本仓库
 2. 创建你的特性分支: `git checkout -b feat/xxx`
 3. 修改文件
-4. 测试：运行 `python sync_to_github.py --dry-run` 确认变更
+4. 测试变更：
+   - 文档变更：运行 `python sync_to_github.py --dry-run` 确认
+   - MCP Server 变更：重启 Kimi Code CLI 后测试 MCP 工具是否可用
+   - 代码变更：在本地手动运行质量门禁验证
 5. 提交: `git commit -m "feat: 说明你的改进"`
 6. 推送到你的 Fork
 7. 创建 Pull Request
@@ -43,6 +56,7 @@ alan-codecoding/
 
 - **SKILL.md**: 保持 YAML frontmatter 格式正确，Markdown 语法规范
 - **Prompt 模板**: 保持统一的模板结构（Role → Responsibilities → Input → Workflow → Output）
+- **MCP Server (`mcp-server/src/index.js`)**: 遵循 MCP SDK 规范，新增工具需注册到 `ListToolsRequestSchema` 和 `CallToolRequestSchema`
 - **Python 脚本**: 兼容 Python 3.8+
 - **命名**: 使用英文命名，注释可用中文
 - **不要硬编码 Token**: 所有 GitHub Token 从环境变量或配置文件读取
