@@ -46,6 +46,7 @@ AlanCodecoding: quick 帮我建一个图书管理网站
 | `pro <需求>` | 专业完整流程 | 生产级项目 |
 | `modify <需求>` | 二次开发 | 给现有项目加功能 |
 | `resume` | 恢复中断 | 开发中断后继续 |
+| `sync` | 同步本地修改到 GitHub | 修改 Skill 后发布更新 |
 | `template` | 查看模板 | 了解可用项目模板 |
 
 ---
