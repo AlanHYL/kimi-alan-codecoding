@@ -83,6 +83,17 @@ Optimization → Optimization agent + Verification agent dual assurance
 - Generates Windows `start.bat` and Unix `start.sh` **one-click scripts**
 - Full Chinese language interface available (see [Chinese version](README.zh-CN.md))
 
+### ⚙️ MCP Server Engine (NEW in v1.1.0)
+AlanCodecoding now includes a **TypeScript MCP Server** that provides deterministic tools:
+
+| Tool | What it does | Why it matters |
+|---|---|---|
+| `scaffold_project` | Generates production-grade project skeleton with JWT auth, structured logging, error handling, CORS, graceful shutdown, Dockerfile, CI/CD built-in | Every project starts from the same high-quality foundation, not written from scratch by AI |
+| `quality_gates` | Runs compile check + tests + security audit, returns PASS/FAIL deterministically | Quality is **enforced by code**, not by AI self-check |
+| `code_check` | Scans for hardcoded ports/secrets/URLs, console.log, missing CORS config | Catches what AI might miss |
+
+These tools are exposed via MCP protocol and called directly by the AI — no Bash parsing, no text scraping.
+
 ---
 
 ## 📋 Available Commands
@@ -164,7 +175,7 @@ Every delivered project passes these gates:
 
 ```
 .kimi-code/skills/alan-codecoding/
-├── SKILL.md                 # Core pipeline (1300+ lines)
+├── SKILL.md                 # Core pipeline (1400+ lines)
 ├── README.md                # This file (English)
 ├── README.zh-CN.md          # Chinese version
 ├── USAGE.md                 # Usage guide (Chinese)
@@ -172,9 +183,13 @@ Every delivered project passes these gates:
 ├── AGENTS.md                # AI agent development guide
 ├── CHANGELOG.md             # Version history
 ├── CONTRIBUTING.md          # Contribution guide
+├── production-standards.md  # Production-grade standard gap analysis
 ├── LICENSE                  # MIT License
 ├── package.json             # npm package info
 ├── sync_to_github.py        # Auto-sync script
+├── mcp-server/              # 🆕 TypeScript MCP Server engine
+│   ├── package.json
+│   └── src/index.js         # scaffold_project, quality_gates, code_check tools
 ├── .github/                 # Issue + PR templates
 └── references/prompts/      # 6 Agent role prompt templates
     ├── 00-architect.md      # Architect
