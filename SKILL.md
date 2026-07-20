@@ -29,7 +29,46 @@ triggers: "开发、写代码、创建项目、实现功能、修复、添加功
 
 ---
 
-## 入口命令定义
+## Karpathy Coding 原则（所有 Agent 必须遵守）
+
+本流水线所有 Agent 在任何编码、审查、审计环节必须遵守以下四项原则：
+
+### 原则 1: Think Before Coding（先思考再编码）
+
+- **陈述假设**：在开始任何工作前，明确说出你的假设。不确定就问，不要猜
+- **列出多种解释**：如果需求有歧义，列出可能的选项而不是默默选一个
+- **对有更简单的方法时要说出来**
+- **困惑时停下来**：明确指出哪里不清楚，不要硬着头皮做
+
+> **在哪里执行**：Phase 1 需求分析、Phase 2 架构设计、Phase 3 每个 Agent 编码前
+
+### 原则 2: Simplicity First（简单优先）
+
+- **最少代码解决问题** — 不多写一行
+- **不做需求以外的功能** — 没有"顺便"、没有"万一以后需要"
+- **不为单次使用创建抽象层** — 三个类似片段好过一个过早抽象
+- **不做未要求的"灵活扩展"** — YAGNI
+
+> **在哪里执行**：Phase 3 编码、Phase 5 审计（检查过度设计）、Phase 6 优化（精简代码）
+
+### 原则 3: Surgical Changes（外科手术式变更）
+
+- **只动必须动的** — 不改相邻代码、不修无关注释、不改格式
+- **不改没有坏的东西** — 不要重构正常工作的代码
+- **匹配现有风格** — 即使你有不同偏好，新代码也要和周围的代码风格一致
+- **只删除被你改得不再使用的东西**
+
+> **在哪里执行**：Phase 3 编码、MODIFY 模式 M3-M4（二次开发时尤其重要）
+
+### 原则 4: Goal-Driven Execution（目标驱动执行）
+
+- **开始前定义成功标准** — 每个任务要有明确的完成条件
+- **把"做 X"变成"验证 Y 通过，然后让它通过"** — 测试优先思维
+- **多步骤任务格式**: `[步骤] → 验证: [检查项]`
+
+> **在哪里执行**：整个流水线的每个质量门禁都是 Goal-Driven 的体现
+
+---
 
 | 命令 | 含义 | 适用用户 |
 |---|---|---|
@@ -235,7 +274,22 @@ codegraph sync
 
 ---
 
-## Phase 1: 需求确认 [用户交互]
+## Phase 1: 需求确认 + 假设陈述 [用户交互]
+
+### Step 0: 陈述假设（Think Before Coding）
+
+在展示任何方案前，**先明确说出你的假设**：
+
+> "根据您的需求，我的理解是：
+> - 您想要的是一个 [Web 应用 / API 服务 / CLI 工具 / ...]
+> - 主要技术方向是 [Node.js / Python / Go / ...]
+> - 需要 [数据库 / 用户认证 / 文件存储 / ...]
+> - 用户规模大概是 [个人使用 / 小团队 / 公开上线]
+> 
+> 这些假设对吗？如果有不对的地方请告诉我，我重新规划"
+
+如果用户纠正假设 → 更新理解 → 重新陈述。
+如果用户确认假设 → 进入方案确认阶段。
 
 ### QUICK 模式
 
@@ -378,8 +432,10 @@ codegraph sync
 ### Step 1: 依赖安装确认
 
 ```bash
-# 验证依赖已安装
-npm ls 2>/dev/null || npm install
+# 验证依赖已安装（根据技术栈选择命令）
+# Node:     npm ls 2>/dev/null || npm install
+# Python:   pip list 2>/dev/null || pip install -r requirements.txt
+# Go:       go list -m 2>/dev/null || go mod tidy
 ```
 
 ### Step 2: Git 分支创建（如授权）
@@ -505,11 +561,9 @@ codegraph sync  // 仅 codegraph_available 时
 
 ```bash
 # 根据技术栈运行测试
-npm test 2>&1
-# 或
-pytest 2>&1
-# 或
-go test ./... 2>&1
+# Node:     npm test 2>&1
+# Python:   pytest 2>&1
+# Go:       go test ./... 2>&1
 ```
 
 ### Step 4: 测试环境清理
@@ -555,8 +609,10 @@ go test ./... 2>&1
 每个 Auditor Agent 执行：
 1. **静态分析**
    ```bash
-   # 运行 lint（如工具已配置）
-   npm run lint 2>/dev/null || echo "LINT_NOT_CONFIGURED"
+   # 运行 lint（根据技术栈选择命令，如工具未配置则跳过）
+   # Node:     npm run lint 2>/dev/null || npx eslint . 2>/dev/null || true
+   # Python:   flake8 . 2>/dev/null || pylint src/ 2>/dev/null || true
+   # Go:       go vet ./... 2>/dev/null || true
    ```
 2. **安全审计**（根据项目安全风险分类选择检查清单）
 3. **依赖漏洞审查**
@@ -612,8 +668,17 @@ go test ./... 2>&1
 ### Step 2: 回归测试门禁
 
 ```bash
-npm test 2>&1
+# 根据技术栈运行全量测试（同 Phase 4）
+# Node: npm test 2>&1 | Python: pytest 2>&1 | Go: go test ./... 2>&1
 ```
+
+### Step 3: 快速安全复查
+
+> ⚠️ **优化可能引入新安全问题**（比如精简代码时移除了安全检查）。
+> 如果优化修改了安全敏感代码（认证、授权、输入验证），触发快速安全复查：
+> - 使用 `codegraph_explore("优化后的代码是否有新的安全问题？")`（如可用）
+> - 如果无 Codegraph：手动审查优化修改的安全相关代码
+> - 发现问题 → 回退优化 → 重新优化
 
 - **全部通过** → ❤️ **心跳 HB-6**: 通过
   ```bash
@@ -701,8 +766,10 @@ docker compose config 2>/dev/null || echo "DOCKER_NOT_AVAILABLE"
 
 **Web 应用：**
 ```bash
-# 启动应用（后台运行）
-npm start &
+# 启动应用（根据技术栈选择命令）
+# Node:   npm start &
+# Python: python main.py &
+```
 # 等待就绪（最多 30 秒）
 for i in $(seq 1 30); do
   curl -s http://localhost:3000/health >/dev/null 2>&1 && break
