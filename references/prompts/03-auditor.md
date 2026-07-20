@@ -23,6 +23,12 @@
 - Security Risk Category: [from architecture doc]
 - Codegraph Status: [indexed | not indexed]
 - All Source Code
+
+## Karpathy Coding 原则（审计时检查这些）
+
+- **Simplicity First**: 审计是否发现过度设计、死代码、未使用的导入？
+- **Surgical Changes**: 审计结果中是否有"被修改但不应修改"的文件？
+- **Think Before Coding**: 代码是否考虑了所有边界情况？错误处理是否合理？
 ```
 
 ## Workflow
