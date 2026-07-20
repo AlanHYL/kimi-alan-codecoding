@@ -50,7 +50,19 @@
 - **B-8** MODIFY 模式无 codegraph 降级路径
 - **B-9** Phase 6 安全复查无结构化清单
 - **B-10** npm audit 无 registry 配置提示
-## v1.1.0 (2026-07-21)
+## v1.2.0 (2026-07-21) 🆕
+
+### GitHub 开源项目搜索与复用
+
+**新增 Phase 1.5：开源项目发现与复用**
+
+- **github_search** — MCP 工具搜索 GitHub，返回 Top 5 匹配的开源项目
+- **github_analyze** — 克隆并分析仓库架构
+- **Pull Mode** — 直接拉取开源项目并定制改造
+- **Replicate Mode** — 学习架构后用生产级标准重建
+- 减少从零开发成本，优先复用成熟的社区方案
+
+### v1.1.0 (2026-07-21)
 
 ### 架构升级：MCP Server (TypeScript) 引擎
 
