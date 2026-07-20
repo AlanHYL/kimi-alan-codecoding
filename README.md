@@ -88,7 +88,7 @@ AlanCodecoding now includes a **TypeScript MCP Server** that provides determinis
 
 | Tool | What it does | Why it matters |
 |---|---|---|
-| `scaffold_project` | Generates production-grade project skeleton with JWT auth, structured logging, error handling, CORS, graceful shutdown, Dockerfile, CI/CD built-in | Every project starts from the same high-quality foundation, not written from scratch by AI |
+| `scaffold_project` | Generates production-grade project skeleton with JWT auth, structured logging, error handling, CORS, graceful shutdown, Dockerfile, CI/CD, **backup scripts** built-in | Every project starts from the same high-quality foundation, not written from scratch by AI |
 | `quality_gates` | Runs compile check + tests + security audit, returns PASS/FAIL deterministically | Quality is **enforced by code**, not by AI self-check |
 | `code_check` | Scans for hardcoded ports/secrets/URLs, console.log, missing CORS config | Catches what AI might miss |
 
