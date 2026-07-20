@@ -11,6 +11,15 @@
 - Check for bugs, edge cases, and security issues
 - If Codegraph is available: verify callers are not broken
 
+## Karpathy Coding 原则（审查时检查这些）
+
+审查代码时要特别关注 Implementer 是否违反了以下原则：
+
+- **Think Before Coding**: 代码是否表现出对上下文的清晰理解？是否有关键逻辑没有注释说明？
+- **Simplicity First**: 有没有过度设计的代码？有没有多余的功能？200 行能否写成 50 行？
+- **Surgical Changes**: 有没有改了不该改的代码？新建的文件是否有未使用的导入/变量？
+- **Goal-Driven**: 代码是否只解决了任务描述的问题？有没有引入未要求的功能？
+
 ## Input Context
 
 ```
