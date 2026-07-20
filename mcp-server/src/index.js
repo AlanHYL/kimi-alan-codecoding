@@ -456,6 +456,120 @@ function runCodeCheck(projectPath) {
 
 
 // ============================================================
+// Tool 5: github_search — 搜索 GitHub 开源项目
+// ============================================================
+async function githubSearch(query, limit = 5) {
+  try {
+    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${limit}`;
+    const resp = await fetch(url, {
+      headers: { "Accept": "application/vnd.github.v3+json" }
+    });
+    if (!resp.ok) throw new Error(`GitHub API error: ${resp.status}`);
+    const data = await resp.json();
+    return (data.items || []).map(item => ({
+      name: item.name,
+      full_name: item.full_name,
+      description: item.description || "",
+      stars: item.stargazers_count,
+      language: item.language || "unknown",
+      license: item.license?.spdx_id || "unknown",
+      updated_at: item.updated_at,
+      html_url: item.html_url,
+      clone_url: item.clone_url,
+      topics: item.topics || [],
+    }));
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
+// ============================================================
+// Tool 6: github_analyze — 分析 GitHub 仓库架构
+// ============================================================
+async function githubAnalyze(repoUrl) {
+  const tmpDir = join(__dirname, "..", "..", ".tmp-analysis");
+  try {
+    if (existsSync(tmpDir)) {
+      // recursive delete
+      const fs = await import("fs/promises");
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
+    
+    // Clone repo
+    execSync(`git clone --depth 1 ${repoUrl} "${tmpDir}"`, { stdio: "pipe", timeout: 60000 });
+    
+    // Analyze structure
+    const files = [];
+    function scanDir(dir, prefix = "") {
+      if (!existsSync(dir)) return;
+      const entries = readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.name.startsWith(".") || entry.name === "node_modules") continue;
+        const fullPath = join(dir, entry.name);
+        const relPath = prefix + entry.name;
+        if (entry.isDirectory()) {
+          scanDir(fullPath, relPath + "/");
+        } else {
+          files.push(relPath);
+        }
+      }
+    }
+    scanDir(tmpDir);
+    
+    // Detect tech stack
+    const hasPackageJson = existsSync(join(tmpDir, "package.json"));
+    const hasPyProject = existsSync(join(tmpDir, "pyproject.toml"));
+    const hasGoMod = existsSync(join(tmpDir, "go.mod"));
+    const hasGemfile = existsSync(join(tmpDir, "Gemfile"));
+    const hasPom = existsSync(join(tmpDir, "pom.xml"));
+    
+    let techStack = [];
+    if (hasPackageJson) {
+      try {
+        const pkg = JSON.parse(readFileSync(join(tmpDir, "package.json"), "utf-8"));
+        techStack.push("Node.js");
+        if (pkg.dependencies) {
+          if (pkg.dependencies.react || pkg.dependencies.vue) techStack.push(pkg.dependencies.react ? "React" : "Vue");
+          if (pkg.dependencies.express) techStack.push("Express");
+          if (pkg.dependencies.next) techStack.push("Next.js");
+        }
+      } catch {}
+    }
+    if (hasPyProject) techStack.push("Python");
+    if (hasGoMod) techStack.push("Go");
+    if (hasGemfile) techStack.push("Ruby");
+    if (hasPom) techStack.push("Java");
+
+    // Count significant files
+    const jsFiles = files.filter(f => f.endsWith(".js") || f.endsWith(".ts")).length;
+    const pyFiles = files.filter(f => f.endsWith(".py")).length;
+    const htmlFiles = files.filter(f => f.endsWith(".html") || f.endsWith(".jsx") || f.endsWith(".tsx") || f.endsWith(".vue")).length;
+    
+    // Cleanup
+    const fsPromises = await import("fs/promises");
+    await fsPromises.rm(tmpDir, { recursive: true, force: true });
+
+    return {
+      tech_stack: techStack.length ? techStack : ["could not detect"],
+      total_files: files.length,
+      js_ts_files: jsFiles,
+      python_files: pyFiles,
+      frontend_files: htmlFiles,
+      top_level_dirs: files.filter(f => !f.includes("/")).map(f => f.endsWith("/") ? f : "").filter(Boolean),
+      structure_sample: files.slice(0, 30),
+      recommendation: techStack.length ? `该项目使用 ${techStack.join(" + ")}，${files.length} 个文件` : "无法识别技术栈"
+    };
+  } catch (err) {
+    // Cleanup on error
+    try {
+      const fsPromises = await import("fs/promises");
+      if (existsSync(tmpDir)) await fsPromises.rm(tmpDir, { recursive: true, force: true });
+    } catch {}
+    return { error: err.message };
+  }
+}
+
+// ============================================================
 // MCP Server
 // ============================================================
 const server = new Server(
@@ -505,6 +619,29 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       description: "列出可用的项目模板",
       inputSchema: { type: "object", properties: {} },
     },
+    {
+      name: "github_search",
+      description: "搜索 GitHub 开源项目。根据关键词返回最匹配的 Top 开源仓库（按 Star 数排序）。获取完整架构信息请用 github_analyze。",
+      inputSchema: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "搜索关键词（英文）, 如 'book management express'" },
+          limit: { type: "number", description: "返回数量, 默认 5", default: 5 },
+        },
+        required: ["query"],
+      },
+    },
+    {
+      name: "github_analyze",
+      description: "克隆并分析 GitHub 仓库的项目结构、技术栈、文件组成。用于复刻架构或理解项目后再修改。",
+      inputSchema: {
+        type: "object",
+        properties: {
+          repo_url: { type: "string", description: "GitHub 仓库 URL, 如 https://github.com/xxx/yyy" },
+        },
+        required: ["repo_url"],
+      },
+    },
   ],
 }));
 
@@ -527,6 +664,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case "template_list": {
       const list = Object.entries(TEMPLATES).map(([id, t]) => ({ id, ...t }));
       return { content: [{ type: "text", text: JSON.stringify(list, null, 2) }] };
+    }
+    case "github_search": {
+      const result = await githubSearch(args.query, args.limit || 5);
+      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+    }
+    case "github_analyze": {
+      const result = await githubAnalyze(args.repo_url);
+      return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
     }
     default:
       throw new Error(`未知工具: ${name}`);
