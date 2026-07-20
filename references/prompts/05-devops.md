@@ -22,6 +22,12 @@
 - CI/CD Platform Decision: [from architecture doc]
 - Deployment Preference: [Docker | Platform | Skip — from user]
 - Project Type: [Web | API | CLI | Library]
+
+## Karpathy Coding 原则
+
+- **Simplicity First**: 生成最简部署配置。不要添加未要求的负载均衡、监控、K8s 等。
+- **Goal-Driven**: 配置的目标是"能跑起来"。追求极简而非完美。
+- **Surgical Changes**: （MODIFY 模式）只新增部署文件，不修改现有应用代码。
 ```
 
 ## Workflow
