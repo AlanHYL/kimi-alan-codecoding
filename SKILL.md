@@ -694,7 +694,8 @@ codegraph sync  // 仅 codegraph_available 时
   ```bash
   git add -A && git commit -m "test: full test suite [HB-4]"
   ```
-- **失败** → 标记失败模块 → 精准回退（只重跑失败模块对应的 Agent）
+- **失败或缺少 E2E 测试** → 标记失败模块 → 精准回退
+- ⚠️ E2E 测试是**强制**的（对于 Web/API 项目），不能跳过
 
 **精准回退**：
 1. 分析测试失败详情 → 定位到具体模块
@@ -708,13 +709,29 @@ codegraph sync  // 仅 codegraph_available 时
 {"phase": "phase4", "heartbeat": "HB-4", "coverage": "N%", "tests_passed": "N"}
 ```
 
-> **NEW 模式注意**：如果当前是 NEW 模式且用户走的是标准路径，在此处可以跳转到 Phase 8（交付），跳过 Phase 5-7（审计/优化/部署）。
+> **NEW 模式注意**：如果当前是 NEW 模式，此处跳过 Phase 6（优化）和 Phase 7（部署），但 **不跳过** Phase 5 的安全审计。
+> Phase 5 在 NEW 模式下走**轻量级审计**（code_check + quality_gates + npm audit），不走完整双人审计。
 
 ---
 
-## Phase 5: 代码审计 + 安全审查（双 Agent 协作）
+## Phase 5: 代码审计 + 安全审查
 
-### Step 1: 双 Agent 独立审计
+### 模式选择
+
+- **PRO 模式**: 完整双人独立审计（Step 1-4 全部执行）
+- **NEW 模式**: 轻量级审计（仅 MCP 工具自动检查，不派 Auditor Agent）
+- **QUICK 模式**: 跳过审计
+
+### NEW 模式轻量审计
+
+如果当前是 NEW 模式，跳过双 Agent 审计，直接调用 MCP 工具：
+
+1. 调用 `mcp__alan_codecoding__quality_gates` → GATE-COMPILE + GATE-TEST + GATE-SECURITY
+2. 调用 `mcp__alan_codecoding__code_check` → 扫描硬编码/console.log/CORS/认证缺失
+3. 如有问题 → 回退到 Phase 3 修复
+4. 全部通过 → ❤️ **心跳 HB-5**: 通过 → 进入 Phase 6 或 Phase 8
+
+### PRO 模式完整审计
 
 派 2 个 Auditor Agent（读取 `references/prompts/03-auditor.md`）：
 - 各自独立审计全部代码
@@ -1266,9 +1283,9 @@ git commit -m "revert: rollback to HB-<N-1>"
 | 项目特征 | 推荐模式 | 走哪些 Phase | 预计交互轮数 |
 |---|---|---|---|
 | 静态页面 (1-3 文件) | quick | -1→0→1→3→4→8 | 3-5 |
-| CRUD Web (有数据库) | new | -1→0→1→2→3→4→8 | 8-15 |
-| 全栈应用 (认证+多模块) | new/pro | 全部 | 15-30 |
-| 微服务 | pro | 全部 + 额外 | 20-40 |
+| CRUD Web (有数据库) | new | -1→0→1→1.5→2→3→4→5(light)→8 | 8-15 |
+| 全栈应用 (认证+多模块) | new/pro | new: 含 5(light) / pro: 全部含 5(完整)+6+7 | 15-30 |
+| 微服务 | pro | 全部含 5(完整)+6+7 + 额外 | 20-40 |
 | 修改已有项目 | modify | M0→M1→M2→M3→M4→M5→M6→M7 | 5-12 |
 | 给现有项目加小功能 | modify | M0→M1→M2→M3→M4→M6→M7 | 5-8 |
 
