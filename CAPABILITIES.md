@@ -242,5 +242,30 @@ cd codegraph && npm install -g
 4. **面向小白** — 所有沟通零术语纯中文
 5. **经验累积** — 每次交付都更新记忆库
 6. **Codegraph 优先** — 任何修改前先用代码地图理解
+7. **MCP 工具确定性执行** — 质量门禁/代码检查用 MCP 工具，不依赖 AI 自觉
+8. **模板先行** — 项目骨架用 `scaffold_project` 生成，确保生产级基础设施一致
+
+## 附录：MCP Server 引擎（v1.1.0）
+
+### 为什么需要 MCP Server
+
+纯提示词（SKILL.md）的问题是约束是软的。为了强制生产级标准，新增 TypeScript MCP Server 提供**确定性工具**：
+
+| MCP 工具 | 功能 | 确定性来源 |
+|---|---|---|
+| `scaffold_project` | 生成生产级项目骨架（JWT认证+结构化日志+统一错误处理+CORS+优雅关闭+Dockerfile+CI/CD） | ✅ 固定模板，每次一致 |
+| `quality_gates` | 运行编译检查+测试+安全审计，返回 PASS/FAIL | ✅ 实际执行命令，不是 AI 自检 |
+| `code_check` | 扫描硬编码端口/密钥/URL、console.log、CORS/认证配置 | ✅ 正则+AST 扫描，客观准确 |
+| `template_list` | 列出可用项目模板 | ✅ 固定列表 |
+
+### 架构分层
+
+```
+SKILL.md（指挥层）
+  ├─ 调用 MCP 工具 → 确定性执行（编译/测试/扫描）
+  └─ 调用 AI Agent → 创造性工作（设计/编码/审查）
+```
+
+MCP 工具处理"对错分明"的事，AI 处理"需要理解"的事。
 7. **最小侵入** — MODIFY 模式下不做不必要重构
 8. **自动降级** — 没有 Codegraph 也能运行
