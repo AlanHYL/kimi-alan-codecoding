@@ -54,3 +54,49 @@ v1.1.0 ─── SKILL.md + MCP Server（确定性工具 + prompt 约束）
 ```
 
 MCP Server 的加入将硬性标准从 prompt 中抽离为可执行工具，大幅提升了交付质量的一致性。
+
+## 规划中的功能（Roadmap）
+
+以下 4 项标记为"规划中"，按优先级排列：
+
+### P0: 数据备份策略（v1.2.0）
+**方案**：`scaffold_project` 增加备份脚本生成
+```
+项目交付时自动生成 backup.sh / backup.bat：
+  - 数据库：sqlite3 .dump / mysqldump / pg_dump
+  - 文件：tar.gz 差异备份
+  - 定时：添加到 cron / Windows Task Scheduler
+  - 保留：最近 7 天滚动
+```
+**触发条件**：PRO 模式下项目包含数据库
+
+### P1: 压力测试（v1.3.0）
+**方案**：MCP Server 新增 `load_test` 工具
+```
+load_test({ project_path, endpoint, duration, concurrency })
+  → 使用 autocannon（Node.js）或 k6
+  → 返回: { rps, p99_latency, p50_latency, error_rate, passed: true/false }
+```
+**门禁标准**：P99 延迟 < 500ms + 错误率 < 1%
+**触发条件**：PRO 模式 Phase 6 优化后
+
+### P2: 回滚方案（v1.3.0）
+**方案**：交付时生成 `rollback.sh` / `rollback.bat`
+```
+基于心跳机制：
+  - 列出最近的健康心跳（git log --oneline | grep [HB-]）
+  - 一键回滚: git revert <last-hb> --no-commit && git commit
+  - Docker 回滚: docker-compose stop && checkout tag && docker-compose up
+```
+**前提**：心跳机制已记录所有健康版本，回滚有可靠基础
+
+### P3: 监控告警配置（v1.4.0）
+**方案**：`scaffold_project` 增加可观测性模块
+```
+模板新增：
+  - src/middleware/metrics.js — Prometheus 指标端点 (/metrics)
+  - docker-compose.monitoring.yml — Prometheus + Grafana 容器
+  - alerting规则示例（CPU > 80%、内存 > 90%、错误率 > 5%）
+```
+**注意**：监控系统需要运维平台支撑，Skill 只生成配置，不上线运行
+**触发条件**：PRO 模式 Phase 7 部署配置
