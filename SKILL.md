@@ -436,7 +436,17 @@ codegraph sync
 
 这是**流水线的核心阶段**，也是**心跳机制的核心**。每个变更必须保持代码健康。
 
-### Step 1: 依赖安装确认
+### Step 1: 依赖安装 + 项目骨架
+
+**在安装依赖前，每个 Agent 必须先为项目创建 `.gitignore`：**
+```bash
+# 写入 .gitignore（防止 node_modules/.venv 被提交）
+echo "node_modules/" >> .gitignore
+echo ".venv/" >> .gitignore
+echo ".env" >> .gitignore
+echo "*.db" >> .gitignore
+echo "data/" >> .gitignore
+```
 
 ```bash
 # 验证依赖已安装（根据技术栈选择命令）
