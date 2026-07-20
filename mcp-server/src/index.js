@@ -276,6 +276,76 @@ jobs:
       - run: npm audit --audit-level=high || true
 `);
 
+  // 🔥 P0: 数据备份脚本
+  const backupsDir = join(projectPath, "backups");
+  if (!existsSync(backupsDir)) mkdirSync(backupsDir, { recursive: true });
+  writeFileSync(join(backupsDir, ".gitkeep"), "");
+
+  writeFileSync(join(projectPath, "backup.sh"),
+`#!/bin/bash
+# ============================================
+# 数据备份脚本 — AlanCodecoding 自动生成
+# 用法: bash backup.sh
+# 建议: 添加到 cron 定时执行 (0 3 * * * bash /path/to/backup.sh)
+# ============================================
+
+BACKUP_DIR="./backups"
+DATE=$(date +%Y%m%d_%H%M%S)
+mkdir -p "$BACKUP_DIR"
+
+echo "📦 开始备份..."
+
+# SQLite 备份（如使用 SQLite）
+if [ -f "./data/app.db" ]; then
+  sqlite3 ./data/app.db ".dump" > "$BACKUP_DIR/app_$DATE.sql"
+  echo "  ✅ SQLite: backups/app_$DATE.sql"
+fi
+
+# PostgreSQL 备份（如使用 PostgreSQL，设置 DATABASE_URL 环境变量）
+if [ -n "$DATABASE_URL" ]; then
+  pg_dump "$DATABASE_URL" > "$BACKUP_DIR/postgres_$DATE.sql" 2>/dev/null
+  if [ $? -eq 0 ]; then echo "  ✅ PostgreSQL: backups/postgres_$DATE.sql"; fi
+fi
+
+# MySQL 备份（如使用 MySQL，设置 DB_USER/DB_PASS/DB_NAME）
+if [ -n "$DB_NAME" ] && [ -n "$DB_USER" ]; then
+  mysqldump -u "$DB_USER" ${DB_PASS:+-p"$DB_PASS"} "$DB_NAME" > "$BACKUP_DIR/mysql_$DATE.sql" 2>/dev/null
+  if [ $? -eq 0 ]; then echo "  ✅ MySQL: backups/mysql_$DATE.sql"; fi
+fi
+
+# 清理 7 天前的备份
+find "$BACKUP_DIR" -name "*.sql" -mtime +7 -delete 2>/dev/null
+echo "🧹 已清理 7 天前的旧备份"
+echo "✅ 备份完成！保留最近 7 天"
+`);
+  // Windows 需要 chmod +x，但 Windows 不支持，生成 .bat 版本
+  writeFileSync(join(projectPath, "backup.bat"),
+`@echo off
+REM ============================================
+REM 数据备份脚本 — AlanCodecoding 自动生成
+REM 用法: backup.bat
+REM 建议: 添加到 Windows 任务计划程序
+REM ============================================
+
+set BACKUP_DIR=.\\backups
+set DATE=%date:~0,4%%date:~5,2%%date:~8,2%_%time:~0,2%%time:~3,2%%time:~6,2%
+set DATE=%DATE: =0%
+if not exist "%BACKUP_DIR%" mkdir "%BACKUP_DIR%"
+
+echo 📦 开始备份...
+
+REM SQLite 备份
+if exist ".\\data\\app.db" (
+  sqlite3 .\\data\\app.db .dump > "%BACKUP_DIR%\\app_%DATE%.sql"
+  echo   ✅ SQLite: backups\\app_%DATE%.sql
+)
+
+REM 清理 7 天前的备份
+forfiles /p "%BACKUP_DIR%" /m "*.sql" /d -7 /c "cmd /c del @file" 2>nul
+echo 🧹 已清理 7 天前的旧备份
+echo ✅ 备份完成！
+`);
+
   return { success: true, message: `项目骨架已生成: ${projectPath}`, files: dirs };
 }
 
