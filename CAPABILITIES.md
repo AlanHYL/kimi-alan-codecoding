@@ -256,7 +256,8 @@ cd codegraph && npm install -g
 | `scaffold_project` | 生成生产级项目骨架（JWT认证+结构化日志+统一错误处理+CORS+优雅关闭+Dockerfile+CI/CD+**数据备份**） | ✅ 固定模板，每次一致 |
 | `quality_gates` | 运行编译检查+测试+安全审计，返回 PASS/FAIL | ✅ 实际执行命令，不是 AI 自检 |
 | `code_check` | 扫描硬编码端口/密钥/URL、console.log、CORS/认证配置 | ✅ 正则+AST 扫描，客观准确 |
-| `template_list` | 列出可用项目模板 | ✅ 固定列表 |
+| `github_search` 🆕 | 搜索 GitHub 开源项目，按 Star 排序返回 Top5 | ✅ 调用 GitHub API |
+| `github_analyze` 🆕 | 克隆并分析仓库架构/技术栈/文件结构 | ✅ 临时 clone + codegraph |
 
 ### 架构分层
 
