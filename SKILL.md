@@ -293,16 +293,19 @@ codegraph sync
 
 ### QUICK 模式
 
-1. 将用户需求**匹配到最近的模板**（见模板章节）
-2. **向用户展示功能清单 + 技术方案（纯中文）：**
+1. **模板匹配 + 假设陈述合并**：根据需求匹配最近模板 → 展示模板功能 + 技术假设
+2. **向用户展示（纯中文）：**
    > "好的！我来帮您建一个 [模板名称]，功能包括：
    > - [功能1]
    > - [功能2]
    > - [功能3]
    > 技术方案：[简述]
-   > 这个方案您满意吗？（不满意的话告诉我您还想加什么）"
+   > 我的理解是您想要的是一个 [Web 应用 / API 服务 / CLI 工具]。
+   > 
+   > 这个方案和假设对吗？"
 3. 用户确认 → 跳转到 Phase 3（跳过 Phase 2，使用模板内置架构）
 4. 用户拒绝 → 根据反馈修改 → 最多 3 轮 → 超限升级
+5. **如果无模板匹配** → 自动降级到 NEW 模式的 Phase 1 标准流程（走架构设计），不会卡住
 
 ### NEW / PRO 模式
 
@@ -343,12 +346,16 @@ codegraph sync
 - 确定数据库/ORM/迁移策略
 - 确定安全风险分类（Web / API / CLI / Library）
 
-环境检查：
+环境检查（**根据技术选型结果动态确定检查项**，不局限于以下三种）：
 ```bash
-# 检查运行时是否安装
-node --version 2>/dev/null || echo "NODE_NOT_FOUND"
-python --version 2>/dev/null || echo "PYTHON_NOT_FOUND"
-go version 2>/dev/null || echo "GO_NOT_FOUND"
+# 检查运行时是否安装（按技术选型结果选择对应的检查命令）
+# 常用运行时的检查命令:
+# Node.js:  node --version 2>/dev/null || echo "NODE_NOT_FOUND"
+# Python:   python --version 2>/dev/null || echo "PYTHON_NOT_FOUND"
+# Go:       go version 2>/dev/null || echo "GO_NOT_FOUND"
+# Java:     java -version 2>/dev/null || echo "JAVA_NOT_FOUND"
+# Rust:     rustc --version 2>/dev/null || echo "RUST_NOT_FOUND"
+# PHP:      php --version 2>/dev/null || echo "PHP_NOT_FOUND"
 ```
 
 如果运行时未安装 → **向用户提示**（纯中文）：
@@ -451,7 +458,12 @@ git checkout develop
 
 ### Step 3: 并行实现（使用独立 Agent 调用，非 AgentSwarm）
 
-对 `docs/tasks.json` 中的每个 Task，派一个独立的 Implementer Agent：
+对 `docs/tasks.json` 中的每个 Task，派一个独立的 Implementer Agent。
+
+> **Agent 数量管理**：
+> - 同时最多派 **5-8 个** Agent（防止上下文耗尽）
+> - 如果 Task 超过 8 个 → 按依赖关系分组，组内并行、组间串行
+> - 如果 Task 少于 2 个 → 仍然派 1 个 Agent 实现，交叉审查时使用独立 Reviewer Agent
 
 **Agent 获取的上下文：**
 ```json
@@ -617,7 +629,11 @@ codegraph sync  // 仅 codegraph_available 时
 2. **安全审计**（根据项目安全风险分类选择检查清单）
 3. **依赖漏洞审查**
    ```bash
-   npm audit --audit-level=high 2>/dev/null || echo "NPM_AUDIT_UNAVAILABLE"
+   # 根据技术栈选择漏洞审查工具（如不可用则跳过）
+   # Node:     npm audit --audit-level=high 2>/dev/null || echo "NPM_AUDIT_UNAVAILABLE"
+   #           （内网环境可尝试: npm audit --registry=https://registry.npmjs.org）
+   # Python:   pip-audit 2>/dev/null || safety check 2>/dev/null || echo "AUDIT_UNAVAILABLE"
+   # Go:       govulncheck ./... 2>/dev/null || echo "AUDIT_UNAVAILABLE"
    ```
 4. **架构合规性校验**
    - 如果 codegraph 可用：`codegraph_callers` 验证所有调用链完整
@@ -675,9 +691,19 @@ codegraph sync  // 仅 codegraph_available 时
 ### Step 3: 快速安全复查
 
 > ⚠️ **优化可能引入新安全问题**（比如精简代码时移除了安全检查）。
-> 如果优化修改了安全敏感代码（认证、授权、输入验证），触发快速安全复查：
-> - 使用 `codegraph_explore("优化后的代码是否有新的安全问题？")`（如可用）
-> - 如果无 Codegraph：手动审查优化修改的安全相关代码
+> 
+> 在复查前先同步 codegraph 索引：
+> ```bash
+> codegraph sync  // 仅 codegraph_available 时
+> ```
+> 
+> 然后根据安全检查清单逐一核查：
+> 1. 本次优化是否修改了**认证/授权**相关代码？ → 验证权限逻辑未被绕过
+> 2. 本次优化是否修改了**输入验证**代码？ → 验证注入防护未被移除
+> 3. 本次优化是否修改了**加密/敏感数据处理**？ → 验证加密逻辑未被削弱
+> 4. 本次优化是否**删除了看似无用但有安全作用的代码**？
+> 5. 使用 `codegraph_explore("优化后的代码是否有新的安全问题？")`（如可用）
+> 6. 如果无 Codegraph：手动审查优化修改的安全相关代码
 > - 发现问题 → 回退优化 → 重新优化
 
 - **全部通过** → ❤️ **心跳 HB-6**: 通过
@@ -782,7 +808,10 @@ done
 
 **CLI 工具：**
 ```bash
-node index.js --help 2>&1
+# 根据技术栈验证 CLI
+# Node:   node index.js --help
+# Python: python main.py --help
+# Go:     go run main.go --help 或 ./<binary> --help
 ```
 - 输出正常 → 继续
 
@@ -910,14 +939,26 @@ git commit --allow-empty -m "chore: final heartbeat [HB-FINAL]"
 
 派 Explorer Agent：
 
+**如果 codegraph 可用：**
 ```bash
-# 使用 codegraph_explore 理解项目
 codegraph_explore("这个项目的整体架构是什么样的？主要有哪些模块？")
 codegraph_explore("项目用了哪些技术栈？目录结构如何组织？")
 codegraph_explore("和数据相关的模块在哪？路由在哪？")
 ```
 
-Agent 汇总分析结果 → 生成"代码理解报告"。
+**如果 codegraph 不可用（降级方案）：**
+```bash
+# 用 Glob + Grep + Read 手动分析
+# 1. 查看项目文件结构: ls/ls -R（Windows: dir /s）
+# 2. 识别技术栈: 检查 package.json / pyproject.toml / go.mod
+# 3. 阅读主要入口文件
+# 4. 阅读关键模块代码
+```
+
+**两种情况都执行以下流程：**
+1. Agent 汇总分析结果 → 生成"代码理解报告"
+2. 识别项目技术栈和模块结构
+3. 理解数据流和路由组织
 
 **向用户报告（纯中文）：**
 > "我已经了解了您的项目结构，现在开始添加 [功能]。需要修改 [N] 个文件、新增 [M] 个文件。这个方案您满意吗？"
