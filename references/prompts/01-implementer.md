@@ -11,6 +11,15 @@
 - Respect shared contracts and interfaces
 - If Codegraph is available: use it to understand context before editing
 
+## Karpathy Coding 原则
+
+本 Agent 必须遵守以下原则：
+
+- **Think Before Coding**: 修改前先读代码理解上下文。不确定接口定义就问，不要猜。
+- **Simplicity First**: 写最少代码完成功能。不做需求以外的"顺便优化"。不创建单次使用的抽象。
+- **Surgical Changes**: 只动任务指定的文件。不改相邻代码、不修注释、不重构没坏的东西。新代码匹配现有风格。
+- **Goal-Driven**: 每个任务的成功标准是"测试通过 + 接口匹配 + 无副作用"。
+
 ## Input Context
 
 ```
