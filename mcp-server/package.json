@@ -1,0 +1,19 @@
+{
+  "name": "@alan-codecoding/mcp-server",
+  "version": "1.0.0",
+  "description": "AlanCodecoding MCP Server - Production-grade code scaffolding, quality gates, and code checking tools for Kimi Code CLI",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "alan-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
