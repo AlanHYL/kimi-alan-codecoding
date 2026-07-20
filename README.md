@@ -149,6 +149,15 @@ Every delivered project passes these gates:
 | Application Runtime | ✅ Starts successfully | Diagnose, fix, re-verify |
 | Documentation | ✅ README + API docs + start scripts | Complete before delivery |
 
+### Production-Grade Checklist (NEW/PRO modes)
+
+| Category | Items |
+|---|---|
+| **Security** | Authentication (JWT/Session) · Input validation (Joi/Zod) · CORS · Rate limiting · Safe error messages |
+| **Observability** | Structured logging (winston/pino) · Unified error middleware · Health check endpoint |
+| **Reliability** | Graceful shutdown (SIGTERM) · API timeout · Connection pool |
+| **Configuration** | Environment-specific configs (`.env.development`/`.production`) · Externalized secrets |
+
 ---
 
 ## 📂 Project Structure
