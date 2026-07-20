@@ -5,9 +5,20 @@
 > 🏆 Kimi Code CLI 首款全自动化多 Agent 协作开发 Skill
 > 🏆 内置心跳保活机制 | 三级记忆系统 | Codegraph 深度集成
 
-[![GitHub release](https://img.shields.io/github/v/release/AlanHYL/kimi-alan-codecoding)](https://github.com/AlanHYL/kimi-alan-codecoding/releases)
-[![License](https://img.shields.io/github/license/AlanHYL/kimi-alan-codecoding)](LICENSE)
-[![Kimi Code CLI](https://img.shields.io/badge/Kimi%20Code-CLI-blue)](https://kimi.ai)
+[![GitHub release](https://img.shields.io/github/v/release/AlanHYL/kimi-alan-codecoding?logo=github&label=最新版本)](https://github.com/AlanHYL/kimi-alan-codecoding/releases)
+[![License](https://img.shields.io/github/license/AlanHYL/kimi-alan-codecoding?logo=open-source-initiative&label=许可证)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/AlanHYL/kimi-alan-codecoding?logo=github&label=Stars)](https://github.com/AlanHYL/kimi-alan-codecoding/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/AlanHYL/kimi-alan-codecoding?logo=git&label=最近更新)](https://github.com/AlanHYL/kimi-alan-codecoding/commits/main)
+[![GitHub repo size](https://img.shields.io/github/repo-size/AlanHYL/kimi-alan-codecoding?label=仓库大小)](https://github.com/AlanHYL/kimi-alan-codecoding)
+[![GitHub issues](https://img.shields.io/github/issues/AlanHYL/kimi-alan-codecoding?logo=github&label=Issues)](https://github.com/AlanHYL/kimi-alan-codecoding/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/AlanHYL/kimi-alan-codecoding?logo=github&label=PRs)](https://github.com/AlanHYL/kimi-alan-codecoding/pulls)
+[![Platform](https://img.shields.io/badge/平台-Windows%20%7C%20macOS%20%7C%20Linux-blue?logo=windows)](https://github.com/AlanHYL/kimi-alan-codecoding)
+[![Kimi Code CLI](https://img.shields.io/badge/Kimi%20Code-CLI-blue?logo=read-the-docs)](https://kimi.ai)
+[![AI 自动编程](https://img.shields.io/badge/AI-自动编程-brightgreen?logo=openai)](https://github.com/AlanHYL/kimi-alan-codecoding)
+[![多 Agent 协作](https://img.shields.io/badge/多Agent-协作-blueviolet?logo=matrix)](https://github.com/AlanHYL/kimi-alan-codecoding)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-orange?logo=git)](CONTRIBUTING.md)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow?logo=conventionalcommits)](https://conventionalcommits.org)
+[![Semantic Versioning](https://img.shields.io/badge/SemVer-2.0.0-red?logo=semver)](https://semver.org)
 
 ---
 
