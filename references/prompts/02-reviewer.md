@@ -65,8 +65,10 @@
 **Security:**
 - [ ] No hardcoded secrets/credentials
 - [ ] Input validation present
-- [ ] No injection vulnerabilities
+- [ ] No injection vulnerabilities (SQL, XSS, command injection)
 - [ ] Safe file/database operations
+- [ ] **（NEW/PRO 模式）** Authentication implemented? CORS configured? Rate limiting?
+- [ ] **（NEW/PRO 模式）** Error messages don't leak stack traces or internal details
 
 ### Step 3: Impact Check (If Codegraph Available)
 
