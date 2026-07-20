@@ -334,6 +334,78 @@ codegraph sync
 
 ---
 
+## Phase 1.5: GitHub 开源项目搜索 [用户交互] 🆕
+
+> **目的**：优先从 GitHub 找现成的开源项目，降低开发成本。
+> QUICK 模式跳过本阶段，直接使用项目模板。
+
+### Step 1: GitHub 搜索
+
+根据 Phase 1 确认的需求提取英文关键词，调用 MCP 工具 `github_search`：
+
+```json
+// AI 调用: mcp__alan_codecoding__github_search({ query: "book management express sqlite", limit: 5 })
+// 返回 Top 5 开源项目
+```
+
+**展示给用户（纯中文）：**
+> "我在 GitHub 上为您找到了以下开源项目：
+> 1. ⭐ 1.2k — xxx/express-book-manager — Express 图书管理系统 (MIT, 3 天前更新)
+> 2. ⭐ 856 — yyy/node-crud-app — Node.js CRUD 应用模板 (Apache-2.0, 1 月前更新)
+> 3. ⭐ 423 — zzz/library-app — 图书馆管理应用 (MIT, 6 月前更新)
+> 
+> 您可以选择：
+> **A.** 拉取某个项目直接使用（我会 clone 下来帮您定制）
+> **B.** 复刻某个项目的架构（学习它的设计，用本 Skill 的生产级标准重建）
+> **C.** 从零开始（不参考开源项目，直接进入架构设计）"
+
+### Step 2: 用户选择
+
+- 用户选 **A** + 项目序号 → 进入 Phase 1.5A（拉取定制）
+- 用户选 **B** + 项目序号 → 进入 Phase 1.5B（复刻架构）
+- 用户选 **C** → 跳过，进入 Phase 2
+
+---
+
+### Phase 1.5A: 拉取并定制（Pull）
+
+```
+1. git clone --depth 1 <repo_url> <project_dir>
+2. codegraph init + codegraph sync
+3. 调用 mcp__alan_codecoding__github_analyze 分析项目结构
+4. codegraph_explore("这个项目的整体架构是什么样的？")
+5. 根据用户需求确定需要修改哪些地方
+6. 向用户展示修改计划：
+   "这个项目已经实现了 [已有功能]。
+    需要额外添加: [缺失功能清单]。
+    我将帮您补充这些功能并注入生产级标准。可以吗？"
+7. 用户确认 → 调用 scaffold_project 注入缺失的安全/日志/错误处理等
+8. 补充用户需要的定制功能
+9. 跳转到 Phase 3（编码修改）
+```
+
+### Phase 1.5B: 复刻架构（Replicate）
+
+```
+1. git clone --depth 1 <repo_url> /tmp/alan-codecoding/inspiration
+2. codegraph init + codegraph sync
+3. codegraph_explore 深入分析：
+   - 模块划分和职责
+   - 数据库 Schema 设计
+   - API 路由结构
+   - 前端组件树
+   - 核心业务逻辑流程
+4. 生成架构参考报告 docs/inspiration-report.md
+5. rm -rf /tmp/alan-codecoding/inspiration
+6. 调用 scaffold_project 生成全新项目骨架（带生产级标准）
+7. 向用户展示：
+   "我已经学习了 [项目名] 的架构设计。
+    将在新的生产级骨架（JWT+日志+CORS+优雅关闭）上，
+    按照它的业务逻辑重新实现。这个方案可以吗？"
+8. 用户确认 → 在新骨架上按架构报告实现业务代码
+9. 跳转到 Phase 3（编码）
+```
+
 ## Phase 2: 架构设计
 
 > QUICK 模式：**跳过本阶段**，使用模板内置架构方案。
@@ -1301,7 +1373,9 @@ git commit -m "revert: rollback to HB-<N-1>"
 | **项目骨架生成** 🔥 | `mcp__alan_codecoding__scaffold_project` — 生成生产级代码（认证+日志+错误处理+CORS+优雅关闭） |
 | **质量门禁** 🔥 | `mcp__alan_codecoding__quality_gates` — 编译检查+测试+安全审计，确定性验证 |
 | **代码违规扫描** 🔥 | `mcp__alan_codecoding__code_check` — 检测硬编码/console.log/CORS 配置 |
-| **模板列表** 🔥 | `mcp__alan_codecoding__template_list` — 列出可用项目模板 |
+| **模板列表** | `mcp__alan_codecoding__template_list` — 列出可用项目模板 |
+| **GitHub 搜索** 🆕 | `mcp__alan_codecoding__github_search` — 搜索 GitHub 开源项目 |
+| **GitHub 分析** 🆕 | `mcp__alan_codecoding__github_analyze` — 分析仓库架构 |
 | 用户确认 | `AskUserQuestion`（纯中文、零术语） |
 | 写入记忆 | `Write` 到 `.alan-codecoding/` 目录 |
 | 计划模式 | `EnterPlanMode` / `ExitPlanMode` |
