@@ -355,3 +355,15 @@ AlanCodecoding 交付的代码经过严格质量控制，不是"能跑就行"的
 | ⚙️ **配置管理** | 提供 .env.example，密钥走环境变量 |
 
 > 这些要求在 Agent 的编码指令中是**强制性的**，不满足条件的代码不会被提交。
+
+### 引擎升级：MCP Server（v1.1.0）
+
+为了确保上述质量标准被**强制执行**而非"建议遵守"，AlanCodecoding 新增 TypeScript MCP Server：
+
+| 工具 | 作用 |
+|---|---|
+| `scaffold_project` | 生成项目骨架（认证+日志+错误处理+CORS+优雅关闭+Dockerfile+CI/CD 已内置），每个项目从同一高标准起步 |
+| `quality_gates` | **程序化**运行编译检查、测试、安全审计，返回 PASS/FAIL，不依赖 AI 自觉 |
+| `code_check` | **自动扫描**硬编码、console.log、CORS 配置、认证缺失等违规 |
+
+这些工具通过 MCP 协议被 AI 直接调用（不是通过 Bash 脚本），结果是结构化的 JSON，不需要 AI 再解析。
