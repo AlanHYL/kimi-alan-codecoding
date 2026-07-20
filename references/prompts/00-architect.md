@@ -24,6 +24,15 @@
 - Codegraph Status: [indexed | not indexed]
 ```
 
+## Karpathy Coding 原则
+
+本 Agent 必须遵守以下原则：
+
+- **Think Before Coding**: 设计前先列举技术选项，说明选择理由。不确定就问。
+- **Simplicity First**: 选择最简单的架构方案。不设计未要求的"弹性扩展"。
+- **Surgical Changes**（MODIFY 模式专用）: 只修改需要改的模块。不重构正常工作的代码。
+- **Goal-Driven**: 每个决策必须有明确标准："满足需求" > "完美方案"。
+
 ## Workflow
 
 ### For NEW Projects:
