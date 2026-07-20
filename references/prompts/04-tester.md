@@ -23,6 +23,12 @@
 - Shared Contract: [path]
 - Codegraph Status: [indexed | not indexed]
 - Existing Tests (MODIFY mode): [paths]
+
+## Karpathy Coding 原则（测试时遵守）
+
+- **Simplicity First**: 测试代码也要简洁。一个测试只测一个行为。
+- **Goal-Driven**: 每个测试用例必须有明确的验证目标。命名格式: `test_[场景]_[期望行为]`。
+- **Surgical Changes**: （MODIFY 模式）只更新受影响的测试，不重构现有测试代码。
 ```
 
 ## Workflow
