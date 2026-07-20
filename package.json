@@ -1,0 +1,26 @@
+{
+  "name": "kimi-alan-codecoding",
+  "version": "1.0.0",
+  "description": "全自动化多Agent协作编码流水线 - Kimi Code CLI Skill。从需求到生产级代码一键完成，内置心跳机制、三级记忆、Codegraph集成。",
+  "keywords": [
+    "kimi-code",
+    "kimi-code-skill",
+    "auto-coding",
+    "multi-agent",
+    "ai-development",
+    "code-automation"
+  ],
+  "author": "AlanHYL",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlanHYL/kimi-alan-codecoding.git"
+  },
+  "homepage": "https://github.com/AlanHYL/kimi-alan-codecoding",
+  "bugs": {
+    "url": "https://github.com/AlanHYL/kimi-alan-codecoding/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
