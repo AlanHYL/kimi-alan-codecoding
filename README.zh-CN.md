@@ -91,9 +91,8 @@
 |---|---|---|
 | `scaffold_project` | 生成生产级项目骨架（JWT认证+日志+错误处理+CORS+优雅关闭+Dockerfile+CI/CD+**数据备份**） | 每个项目从同一高标准起步 |
 | `quality_gates` | 运行编译检查+测试+安全审计，返回 PASS/FAIL | **程序强制执行**质量门禁，不依赖 AI 自觉 |
-| `code_check` | 扫描硬编码/console.log/CORS/认证缺失 | 捕捉 AI 可能遗漏的问题 |
-
-这些工具通过 MCP 协议被 AI 直接调用，不需要经过 Bash 脚本解析文本。
+| `github_search` 🆕 | 搜索 GitHub 开源项目，匹配用户需求 | 找到成熟的社区方案，非从零开始 |
+| `github_analyze` 🆕 | 克隆并分析仓库架构/技术栈/结构 | 学习生产系统后再编码 |
 
 ---
 
