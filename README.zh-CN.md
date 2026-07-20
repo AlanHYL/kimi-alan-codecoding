@@ -89,7 +89,7 @@
 
 | 工具 | 功能 | 意义 |
 |---|---|---|
-| `scaffold_project` | 生成生产级项目骨架（JWT认证+日志+错误处理+CORS+优雅关闭+Dockerfile+CI/CD） | 每个项目从同一高标准起步 |
+| `scaffold_project` | 生成生产级项目骨架（JWT认证+日志+错误处理+CORS+优雅关闭+Dockerfile+CI/CD+**数据备份**） | 每个项目从同一高标准起步 |
 | `quality_gates` | 运行编译检查+测试+安全审计，返回 PASS/FAIL | **程序强制执行**质量门禁，不依赖 AI 自觉 |
 | `code_check` | 扫描硬编码/console.log/CORS/认证缺失 | 捕捉 AI 可能遗漏的问题 |
 
