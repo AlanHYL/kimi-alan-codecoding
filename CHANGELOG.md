@@ -50,3 +50,25 @@
 - **B-8** MODIFY 模式无 codegraph 降级路径
 - **B-9** Phase 6 安全复查无结构化清单
 - **B-10** npm audit 无 registry 配置提示
+## v1.1.0 (2026-07-21)
+
+### 架构升级：MCP Server (TypeScript) 引擎
+
+**核心变更：从纯 SKILL.md 升级为 SKILL.md + MCP Server 混合架构**
+
+纯提示词约束被证明是不足以保证生产级代码质量的。新增 TypeScript MCP Server 提供确定性工具：
+
+- **scaffold_project** — 生成生产级项目骨架，自带 JWT 认证、结构化日志、统一错误处理、CORS 白名单、优雅关闭、Dockerfile、CI/CD
+- **quality_gates** — 确定性质量门禁（编译/测试/安全审计），返回 PASS/FAIL，不再依赖 AI 自觉
+- **code_check** — 代码违规扫描（硬编码端口/密钥/URL、console.log、CORS 配置）
+- **template_list** — 项目模板列表
+
+**新增文件：**
+- `mcp-server/package.json`
+- `mcp-server/src/index.js`
+
+**文档更新：**
+- `production-standards.md` — 新增 24 项生产级交付标准差距分析
+- `references/prompts/01-implementer.md` — 生产级代码要求从"建议"升级为"强制"
+- `references/prompts/00-architect.md` — 新增 17 项生产级架构检查项
+- `references/prompts/02-reviewer.md` — 新增安全/生产级审查项
