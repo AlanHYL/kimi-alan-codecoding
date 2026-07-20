@@ -61,7 +61,8 @@ SKILL.md 中会通过 MCP 协议调用以下工具执行**确定性任务**：
 | `scaffold_project` | 生成项目骨架（认证/日志/错误处理/CORS/优雅关闭/Dockerfile/CI/CD） | Phase 3 Step 3 |
 | `quality_gates` | 运行编译检查 + 测试 + 安全审计 | Phase 4 Step 5, Phase 5 Step 4 |
 | `code_check` | 扫描硬编码/console.log/CORS 配置 | Phase 4 Step 5, Phase 5 Step 4 |
-| `template_list` | 列出可用模板 | Phase 1 QUICK 模式 |
+| `github_search` 🆕 | Phase 1.5 搜索 GitHub 开源项目 | `mcp__alan_codecoding__github_search` |
+| `github_analyze` 🆕 | Phase 1.5 分析仓库架构 | `mcp__alan_codecoding__github_analyze` |
 
 MCP Server 位于 `mcp-server/src/index.js`。修改这些工具的逻辑需要编辑该文件，然后重启 Kimi Code CLI。
 
