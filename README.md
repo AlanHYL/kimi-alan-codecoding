@@ -83,16 +83,15 @@ Optimization → Optimization agent + Verification agent dual assurance
 - Generates Windows `start.bat` and Unix `start.sh` **one-click scripts**
 - Full Chinese language interface available (see [Chinese version](README.zh-CN.md))
 
-### ⚙️ MCP Server Engine (NEW in v1.1.0)
+### ⚙️ MCP Server Engine (v1.1.0+)
 AlanCodecoding now includes a **TypeScript MCP Server** that provides deterministic tools:
 
 | Tool | What it does | Why it matters |
 |---|---|---|
 | `scaffold_project` | Generates production-grade project skeleton with JWT auth, structured logging, error handling, CORS, graceful shutdown, Dockerfile, CI/CD, **backup scripts** built-in | Every project starts from the same high-quality foundation, not written from scratch by AI |
 | `quality_gates` | Runs compile check + tests + security audit, returns PASS/FAIL deterministically | Quality is **enforced by code**, not by AI self-check |
-| `code_check` | Scans for hardcoded ports/secrets/URLs, console.log, missing CORS config | Catches what AI might miss |
-
-These tools are exposed via MCP protocol and called directly by the AI — no Bash parsing, no text scraping.
+| `github_search` 🆕 | Searches GitHub for open-source projects matching your requirements | Find battle-tested solutions instead of building from scratch |
+| `github_analyze` 🆕 | Clones and analyzes a repo's architecture, tech stack, and structure | Learn from production systems before coding |
 
 ---
 
