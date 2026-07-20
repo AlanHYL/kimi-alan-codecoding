@@ -5,8 +5,8 @@ description: |
   内置心跳机制确保代码始终健康，记忆系统跨项目积累经验。
   支持 quick（小白快车道）/ new（标准新项目）/ pro（专业完整）/ modify（二次开发）四种模式。
   集成 Codegraph MCP 实现精准代码理解和影响分析。
-使用时机：用户要求"开发/创建/实现/写"任何功能、组件、模块、页面、API、应用时。
-触发词：开发、写代码、创建项目、实现功能、修复、添加功能、修改、AlanCodecoding、帮我开发、一键开发、全自动开发、二次开发、帮我改、加功能
+usage: "用户要求开发/创建/实现/写任何功能、组件、模块、页面、API、应用时"
+triggers: "开发、写代码、创建项目、实现功能、修复、添加功能、修改、AlanCodecoding、帮我开发、一键开发、全自动开发、二次开发、帮我改、加功能"
 ---
 
 # AlanCodecoding — 全自动化多 Agent 协作开发流水线
@@ -635,10 +635,13 @@ npm test 2>&1
 - 所有端点列表
 - 请求/响应示例
 
-**Mermaid 架构图**：
+**Mermaid 架构图**（示例 — 实际运行时根据项目生成）：
 ```mermaid
 graph TD
-    <!-- 基于实际代码和架构文档生成 -->
+    Client[用户] --> WebApp[Web 应用]
+    WebApp --> API[API 层]
+    API --> Service[业务逻辑层]
+    Service --> DB[(数据库)]
 ```
 
 ### Checkpoint
