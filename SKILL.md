@@ -38,6 +38,7 @@ description: |
 | `AlanCodecoding: pro <需求描述>` | 完整专业流程（含审计+优化+部署） | 专业开发者 |
 | `AlanCodecoding: modify <需求描述>` | 修改已有项目（二次开发） | 所有用户 |
 | `AlanCodecoding: resume` | 从 checkpoint 恢复中断的流水线 | 所有用户 |
+| `AlanCodecoding: sync` | 同步本地的 Skill 修改到 GitHub | 开发者 |
 | `AlanCodecoding: template` | 列出可用项目模板 | 小白 |
 
 ### 响应规则
@@ -1160,6 +1161,62 @@ git commit -m "revert: rollback to HB-<N-1>"
 | 加载子技能 | `Skill`（读取对应 prompt 模板） |
 | 加载 lessons | `Read(.alan-codecoding/lessons.json)` |
 | 恢复流水线 | 检测 checkpoint → 跳过已完成阶段 |
+
+---
+
+## Sync 命令：自动同步 Skill 修改到 GitHub
+
+当你修改了本 Skill 的文件后（比如优化了 SKILL.md、改了 prompt 模板），用 `AlanCodecoding: sync` 自动推送到 GitHub。
+
+### 前置要求
+
+需要在项目目录创建 `.github-token` 文件：
+
+```bash
+cd ~/.kimi-code/skills/alan-codecoding
+echo '你的GitHubToken' > .github-token
+```
+
+或者设置环境变量：
+```bash
+export GITHUB_TOKEN=你的GitHubToken
+```
+
+### 执行流程
+
+```
+用户: "AlanCodecoding: sync"
+    │
+    ├─ Step 1: 扫描本地 Skill 目录所有文件
+    ├─ Step 2: 查询 GitHub 上的远程文件列表
+    ├─ Step 3: 对比差异（新建 / 更新 / 删除）
+    ├─ Step 4: 展示变更预览给用户确认
+    ├─ Step 5: 用户确认 → 通过 API 逐一推送
+    └─ Step 6: 报告同步结果
+```
+
+### 底层实现
+
+调用 `sync_to_github.py` 脚本完成实际同步：
+- 使用 GitHub Contents API（不依赖 git 命令）
+- 逐个文件对比内容 hash，只推送有变更的文件
+- 支持新建、修改、删除三种操作
+- 支持 `--dry-run` 预览模式
+
+### 手动运行（不需 AI 辅助）
+
+```bash
+cd ~/.kimi-code/skills/alan-codecoding
+
+# 预览变更
+python sync_to_github.py --dry-run
+
+# 执行同步
+python sync_to_github.py
+
+# 指定 Token
+python sync_to_github.py --token ghp_xxx
+```
 
 ---
 
