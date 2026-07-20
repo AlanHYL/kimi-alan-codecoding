@@ -466,9 +466,19 @@ done
 git checkout develop
 ```
 
-### Step 3: 并行实现（使用独立 Agent 调用，非 AgentSwarm）
+### Step 3: 并行实现（使用 MCP 工具生成骨架 + 独立 Agent 调用）
 
-对 `docs/tasks.json` 中的每个 Task，派一个独立的 Implementer Agent。
+**先用 MCP 工具 `scaffold_project` 生成生产级项目骨架：**
+```json
+// AI 调用: mcp__alan_codecoding__scaffold_project({
+//   project_path: "/path/to/project",
+//   tech: "node",
+//   template: "web-crud"
+// })
+// 自动生成: JWT 认证 + 结构化日志 + 统一错误处理 + CORS 白名单 + 优雅关闭 + Dockerfile + CI/CD
+```
+
+**然后对 `docs/tasks.json` 中的每个 Task，派一个独立的 Implementer Agent**，在骨架上添加业务逻辑。
 
 > **Agent 数量管理**：
 > - 同时最多派 **5-8 个** Agent（防止上下文耗尽）
@@ -594,7 +604,19 @@ codegraph sync  // 仅 codegraph_available 时
 # 关闭测试服务、清理测试数据
 ```
 
-### Step 5: 门禁判定
+### Step 5: 门禁判定（通过 MCP 工具执行，非人工检查）
+
+**调用 MCP 工具 `quality_gates` 进行确定性验证：**
+```json
+// AI 调用: mcp__alan_codecoding__quality_gates({ project_path: "/path/to/project" })
+// 返回: [{ gate: "GATE-COMPILE", status: "PASS" }, { gate: "GATE-TEST", status: "PASS" }, ...]
+```
+
+**调用 MCP 工具 `code_check` 进行硬编码/安全违规扫描：**
+```json
+// AI 调用: mcp__alan_codecoding__code_check({ project_path: "/path/to/project" })
+// 返回: { passed: true/false, high: N, medium: N, issues: [...] }
+```
 
 - **全部通过 + 覆盖率 ≥ 80%** → ❤️ **心跳 HB-4**: 通过
   ```bash
@@ -1276,6 +1298,10 @@ git commit -m "revert: rollback to HB-<N-1>"
 | 代码理解 | `mcp__codegraph__codegraph_explore` |
 | 影响分析 | `mcp__codegraph__codegraph_callers` |
 | 读取符号 | `mcp__codegraph__codegraph_node(symbol)` |
+| **项目骨架生成** 🔥 | `mcp__alan_codecoding__scaffold_project` — 生成生产级代码（认证+日志+错误处理+CORS+优雅关闭） |
+| **质量门禁** 🔥 | `mcp__alan_codecoding__quality_gates` — 编译检查+测试+安全审计，确定性验证 |
+| **代码违规扫描** 🔥 | `mcp__alan_codecoding__code_check` — 检测硬编码/console.log/CORS 配置 |
+| **模板列表** 🔥 | `mcp__alan_codecoding__template_list` — 列出可用项目模板 |
 | 用户确认 | `AskUserQuestion`（纯中文、零术语） |
 | 写入记忆 | `Write` 到 `.alan-codecoding/` 目录 |
 | 计划模式 | `EnterPlanMode` / `ExitPlanMode` |
