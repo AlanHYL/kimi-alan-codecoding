@@ -58,10 +58,11 @@
 
 纯提示词约束被证明是不足以保证生产级代码质量的。新增 TypeScript MCP Server 提供确定性工具：
 
-- **scaffold_project** — 生成生产级项目骨架，自带 JWT 认证、结构化日志、统一错误处理、CORS 白名单、优雅关闭、Dockerfile、CI/CD
-- **quality_gates** — 确定性质量门禁（编译/测试/安全审计），返回 PASS/FAIL，不再依赖 AI 自觉
+- **scaffold_project** — 生成生产级项目骨架，自带 JWT 认证、结构化日志、统一错误处理、CORS 白名单、优雅关闭、Dockerfile、CI/CD、**数据备份脚本**
+- **quality_gates** — 确定性质量门禁（编译/测试/安全审计），返回 PASS/FAIL
 - **code_check** — 代码违规扫描（硬编码端口/密钥/URL、console.log、CORS 配置）
 - **template_list** — 项目模板列表
+- **backup 策略（P0 已实施）** — `scaffold_project` 自动生成 `backup.sh`/`backup.bat`，支持 SQLite/PG/MySQL，保留 7 天
 
 **新增文件：**
 - `mcp-server/package.json`
